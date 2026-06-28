@@ -26,7 +26,7 @@ public:
         other.handle = nullptr;
     }
 
-    constexpr ~Task() {
+    constexpr ~Task() noexcept {
         if (handle) {
             handle.destroy();
         }
