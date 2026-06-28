@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <thread>
 #include <coroutine>
 #include <vector>
@@ -109,9 +110,9 @@ public:
     constexpr void run() {
         while (not ready_queue.empty() or not timers.empty()) {
             // Process ready tasks
-            while (not ready_queue.empty()) {
-                auto handle = ready_queue.front();
-                ready_queue.pop_front();
+            auto current_ready_queue = std::move(ready_queue);
+            for (auto handle : current_ready_queue) {
+                assert(not handle.done() && "Task should not be done when resuming");
                 handle.resume();
             }
 
