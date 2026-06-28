@@ -1,5 +1,6 @@
 #pragma once
 
+#include <thread>
 #include <coroutine>
 #include <vector>
 #include <queue>
@@ -9,6 +10,7 @@
 
 namespace asyncio {
 
+// TODO really we should have a Future class?
 // template<typename T>
 // class Future {};
 
@@ -94,6 +96,16 @@ public:
         ready_queue.push_back(task.get_handle());
     }
 
+    /**
+     * @brief Run the event loop until no tasks or timers remain.
+     *
+     * Marked `constexpr` for safety rather than compile-time evaluation.
+     * C++23 (P2448) permits non-constexpr statements inside a constexpr
+     * function as long as they are never reached during constant evaluation.
+     * The constexpr specifier enables the compiler to enforce a stricter
+     * subset of the language that eliminates several categories of C
+     * legacy undefined behaviour.
+     */
     constexpr void run() {
         while (not ready_queue.empty() or not timers.empty()) {
             // Process ready tasks
@@ -110,6 +122,9 @@ public:
                     auto handle = timers.top().handle;
                     timers.pop();
                     ready_queue.push_back(handle);
+                }
+                if (not timers.empty()) {
+                    std::this_thread::sleep_until(timers.top().time);
                 }
             }
         }
