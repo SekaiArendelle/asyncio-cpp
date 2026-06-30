@@ -1,2 +1,4 @@
 **/build/
 **/.vscode/
+.pixi/
+pixi.lock
