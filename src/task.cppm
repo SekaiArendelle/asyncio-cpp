@@ -1,11 +1,12 @@
-#pragma once
-
+module;
 #include <coroutine>
 #include <exception>
 
+export module asyncio:task;
+
 namespace asyncio {
 
-template<typename T>
+export template<typename T>
 class Task {
 public:
     class promise_type;

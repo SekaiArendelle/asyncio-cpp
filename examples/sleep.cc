@@ -1,4 +1,7 @@
-#include <asyncio/asyncio.hh>
+import asyncio;
+
+#include <chrono>
+#include <coroutine>
 
 using namespace std::chrono_literals;
 

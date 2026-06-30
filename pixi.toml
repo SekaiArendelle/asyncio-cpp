@@ -7,9 +7,9 @@ platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
 
 [dependencies]
 clangxx = ">=22"
-cmake = ">=3.20"
+cmake = ">=3.28"
 ninja = ">=1.12"
 
 [tasks]
-example-configure = { cmd = "cmake -S examples -B examples/build -G Ninja -DCMAKE_CXX_COMPILER=clang++", inputs = ["examples/CMakeLists.txt"] }
-example = { cmd = "cmake --build examples/build --target {{ name }} && ./examples/build/{{ name }}", args = [{ arg = "name" }], depends-on = ["example-configure"] }
+configure = { cmd = "cmake -S . -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_INSTALL_PREFIX=\"$PWD/.local\" && cmake --build build && cmake --install build", inputs = ["CMakeLists.txt", "src/"] }
+example = { cmd = "cmake -S examples -B examples/build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_PREFIX_PATH=\"$PWD/.local\" && cmake --build examples/build --target {{ name }} && ./examples/build/{{ name }}", args = [{ arg = "name", default = "sleep" }], depends-on = ["configure"] }

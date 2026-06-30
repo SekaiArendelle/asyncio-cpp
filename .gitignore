@@ -2,3 +2,4 @@
 **/.vscode/
 .pixi/
 pixi.lock
+.local/

@@ -1,18 +1,32 @@
-#pragma once
-
-#include <cassert>
+module;
+#include <chrono>
 #include <thread>
-#include <coroutine>
 #include <vector>
 #include <queue>
-#include <chrono>
+#include <cassert>
+#include <coroutine>
+#include <type_traits>
 
-#include "task.hh"
-#include "details/concepts.hh"
+export module asyncio:event_loop;
+
+import :task;
+
+namespace asyncio::details {
+
+template<typename T>
+constexpr bool chrono_duration_impl = false;
+
+template<typename Rep, typename Period>
+constexpr bool chrono_duration_impl<std::chrono::duration<Rep, Period>> = true;
+
+template<typename T>
+concept chrono_duration = chrono_duration_impl<std::remove_cvref_t<T>>;
+
+} // namespace asyncio::details
 
 namespace asyncio {
 
-class EventLoop {
+export class EventLoop {
     struct QueueElement {
         std::coroutine_handle<> handle;
         std::chrono::steady_clock::time_point time;
@@ -20,7 +34,7 @@ class EventLoop {
 
     struct TimerCompare {
         static bool operator()(QueueElement const& a, QueueElement const& b) noexcept(noexcept(a.time > b.time)) {
-            return a.time > b.time; // Compare based on time for priority queue
+            return a.time > b.time;
         }
     };
 
