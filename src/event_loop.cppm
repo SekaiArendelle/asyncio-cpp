@@ -114,7 +114,9 @@ public:
      * @note Only lvalue references make sense, cause a temporary EventLoop can not resume anything.
      */
     [[nodiscard]]
-    constexpr auto sleep(this EventLoop& self, details::chrono_duration auto duration) {
+    constexpr auto sleep(this EventLoop& self, details::chrono_duration auto duration) noexcept {
+        // std::chrono::steady_clock::now is guaranteed to be noexcept
+        // https://eel.is/c++draft/time.clock.steady
         return SleepAwaiter{std::chrono::steady_clock::now() + duration, self};
     }
 };
