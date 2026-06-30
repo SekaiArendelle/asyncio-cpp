@@ -8,7 +8,7 @@ target_sources(asyncio
   PUBLIC FILE_SET CXX_MODULES
   BASE_DIRS src
   FILES
-    src/asyncio.cppm
+    src/lib.cppm
     src/task.cppm
     src/event_loop.cppm
 )
