@@ -1,6 +1,5 @@
 [workspace]
 name = "asyncio-cpp"
-version = "0.0.1"
 description = "A C++20 async/await event loop library"
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]

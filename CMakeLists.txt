@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(asyncio-cpp VERSION 0.1.0 LANGUAGES CXX)
+project(asyncio-cpp VERSION 0.0.1 LANGUAGES CXX)
 
 add_library(asyncio)
 target_compile_features(asyncio PUBLIC cxx_std_23)
