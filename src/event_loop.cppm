@@ -10,19 +10,7 @@ module;
 export module asyncio:event_loop;
 
 import :task;
-
-namespace asyncio::details {
-
-template<typename T>
-constexpr bool chrono_duration_impl = false;
-
-template<typename Rep, typename Period>
-constexpr bool chrono_duration_impl<std::chrono::duration<Rep, Period>> = true;
-
-template<typename T>
-concept chrono_duration = chrono_duration_impl<std::remove_cvref_t<T>>;
-
-} // namespace asyncio::details
+import :details.chrono;
 
 namespace asyncio {
 
@@ -114,9 +102,16 @@ public:
      * @note Only lvalue references make sense, cause a temporary EventLoop can not resume anything.
      */
     [[nodiscard]]
-    constexpr auto sleep(this EventLoop& self, details::chrono_duration auto duration) noexcept {
+    constexpr auto sleep(this EventLoop& self, details::small_chrono_duration auto duration) noexcept {
         // std::chrono::steady_clock::now is guaranteed to be noexcept
         // https://eel.is/c++draft/time.clock.steady
+        return SleepAwaiter{std::chrono::steady_clock::now() + duration, self};
+    }
+
+    [[nodiscard]]
+    constexpr auto sleep(this EventLoop& self, details::huge_chrono_duration auto const& duration) noexcept {
+        // Just as what standard library did, use const& here
+        // https://en.cppreference.com/cpp/thread/condition_variable/wait_for
         return SleepAwaiter{std::chrono::steady_clock::now() + duration, self};
     }
 };

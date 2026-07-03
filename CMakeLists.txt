@@ -11,6 +11,7 @@ target_sources(asyncio
     src/lib.cppm
     src/task.cppm
     src/event_loop.cppm
+    src/details/chrono.cppm
 )
 
 include(CMakePackageConfigHelpers)
