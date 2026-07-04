@@ -4,7 +4,7 @@ module;
 
 export module asyncio:poller.io_event;
 
-namespace asyncio {
+namespace asyncio::poller {
 
 export struct IoEvent {
     std::coroutine_handle<> handle;
