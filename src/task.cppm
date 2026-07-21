@@ -132,35 +132,25 @@ private:
     };
 
 private:
-    struct VoidTaskCoAwaiter {
+    struct CoAwaiter {
         handle_type callee;
 
         static constexpr bool await_ready() noexcept {
             return false;
         }
 
-        auto await_suspend(this VoidTaskCoAwaiter& self, std::coroutine_handle<> caller) noexcept -> std::coroutine_handle<> {
+        auto await_suspend(this CoAwaiter& self, std::coroutine_handle<> caller) noexcept -> std::coroutine_handle<> {
             self.callee.promise().continuation = caller;
             return self.callee;
         }
 
-        static void await_resume() noexcept {
-        }
-    };
-
-    struct TypedTaskCoAwaiter {
-        handle_type callee;
-
-        static constexpr bool await_ready() noexcept {
-            return false;
+        static void await_resume() noexcept
+            requires (std::is_void_v<T>) {
         }
 
-        auto await_suspend(this TypedTaskCoAwaiter& self, std::coroutine_handle<> caller) noexcept -> std::coroutine_handle<> {
-            self.callee.promise().continuation = caller;
-            return self.callee;
-        }
-
-        auto await_resume() noexcept -> T {
+        auto await_resume() noexcept -> T
+            requires (not std::is_void_v<T>)
+        {
             return std::move(*this->callee.promise().value);
         }
     };
@@ -172,11 +162,7 @@ public:
             std::terminate();
         }
 #endif
-        if constexpr (std::is_void_v<T>) {
-            return VoidTaskCoAwaiter{self.handle};
-        } else {
-            return TypedTaskCoAwaiter{self.handle};
-        }
+        return CoAwaiter{self.handle};
     }
 
     constexpr auto get_handle(this Task<T> const& self) noexcept -> handle_type {
@@ -185,6 +171,17 @@ public:
 
     void resume(this Task<T>& self) {
         self.handle.resume();
+    }
+
+    static void result() noexcept
+        requires (std::is_void_v<T>) {
+    }
+
+    auto result(this Task<T>& self) -> T
+        requires (not std::is_void_v<T>)
+    {
+        // TODO terminate if result have been called twice
+        return std::move(*self.handle.promise().value);
     }
 };
 

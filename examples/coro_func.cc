@@ -24,6 +24,10 @@ auto foo() -> asyncio::Task<void> {
 
     std::puts("[foo] Calling baz...");
     int result = co_await baz();
+    // equivalently, you can do:
+    // auto task = baz();
+    // task.resume();
+    // int result = task.result();
     std::println("[foo] Back from baz! Result: {}", result);
     co_return;
 }
