@@ -15,4 +15,4 @@ build = { cmd = "cmake --build build", depends-on = ["configure"] }
 install = { cmd = "cmake --install build", depends-on = ["build"] }
 test = { cmd = "cmake -S tests -B tests/build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_PREFIX_PATH=\"$PWD/.local\" && cmake --build tests/build && ctest --test-dir tests/build --output-on-failure", depends-on = ["install"] }
 example = { cmd = "cmake -S examples -B examples/build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_PREFIX_PATH=\"$PWD/.local\" && cmake --build examples/build --target {{ name }} && ./examples/build/{{ name }}", args = [{ arg = "name" }], depends-on = ["install"] }
-clean = { cmd = "cmake -E rm -rf build tests\\build examples\\build .local && cmake -E rm -f .pixi\\task-cache-v0\\*.json" }
+clean = { cmd = "cmake -E rm -rf build tests/build examples/build .local" }
