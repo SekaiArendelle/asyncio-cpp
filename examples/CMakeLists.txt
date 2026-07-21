@@ -7,5 +7,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(asyncio REQUIRED)
 
-add_executable(sleep sleep.cc)
-target_link_libraries(sleep PRIVATE asyncio::asyncio)
+add_executable(coro_func coro_func.cc)
+target_link_libraries(coro_func PRIVATE asyncio::asyncio)

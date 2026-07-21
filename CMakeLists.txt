@@ -10,7 +10,6 @@ target_sources(asyncio
   FILES
     src/lib.cppm
     src/task.cppm
-    src/event_loop.cppm
     src/details/chrono.cppm
 )
 
