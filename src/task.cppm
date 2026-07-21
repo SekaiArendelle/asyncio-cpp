@@ -167,6 +167,11 @@ private:
 
 public:
     auto operator co_await(this Task<T> const& self) noexcept {
+#ifndef NDEBUG
+        if (not self.handle or self.handle.done()) [[unlikely]] {
+            std::terminate();
+        }
+#endif
         if constexpr (std::is_void_v<T>) {
             return VoidTaskCoAwaiter{self.handle};
         } else {
@@ -179,12 +184,6 @@ public:
     }
 
     void resume(this Task<T>& self) {
-        if (not self.handle) {
-            std::terminate();
-        }
-        if (self.handle.done()) {
-            std::terminate();
-        }
         self.handle.resume();
     }
 };
