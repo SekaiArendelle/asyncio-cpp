@@ -5,6 +5,28 @@ find_package(asyncio REQUIRED)
 
 enable_testing()
 
+set(ASYNCIO_SANITIZER "" CACHE STRING "Enable sanitizers: address, undefined (comma-separated)")
+
+if(ASYNCIO_SANITIZER)
+    string(REPLACE "," ";" _san_list "${ASYNCIO_SANITIZER}")
+    foreach(san ${_san_list})
+        string(STRIP "${san}" san)
+        if(san STREQUAL "address")
+            message(STATUS "[asan] AddressSanitizer enabled")
+            list(APPEND _san_cflags -fsanitize=address -fno-omit-frame-pointer)
+            list(APPEND _san_lflags -fsanitize=address)
+        elseif(san STREQUAL "undefined")
+            message(STATUS "[ubsan] UndefinedBehaviorSanitizer enabled")
+            list(APPEND _san_cflags -fsanitize=undefined)
+            list(APPEND _san_lflags -fsanitize=undefined)
+        else()
+            message(WARNING "Unknown sanitizer: ${san}")
+        endif()
+    endforeach()
+    add_compile_options(${_san_cflags})
+    add_link_options(${_san_lflags})
+endif()
+
 file(GLOB TEST_SOURCES "test_*.cc")
 
 foreach(test_source ${TEST_SOURCES})
