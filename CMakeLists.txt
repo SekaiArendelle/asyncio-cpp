@@ -29,8 +29,8 @@ install(EXPORT AsyncioTargets
 )
 
 configure_package_config_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/AsyncioConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/AsyncioConfig.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/asyncioConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/asyncioConfig.cmake
   INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/asyncio
 )
 
@@ -41,7 +41,7 @@ write_basic_package_version_file(
 )
 
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/AsyncioConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/asyncioConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/asyncioConfigVersion.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/asyncio
 )
