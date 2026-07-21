@@ -1,11 +1,17 @@
 import asyncio;
 
+#include <print>
 #include <cstdio>
 #include <coroutine>
 
 auto bar() -> asyncio::Task<void> {
     std::puts("[bar] Doing some work in bar...");
     co_return;
+}
+
+auto baz() -> asyncio::Task<int> {
+    std::puts("[baz] Doing some work in baz...");
+    co_return 1;
 }
 
 auto foo() -> asyncio::Task<void> {
@@ -15,6 +21,10 @@ auto foo() -> asyncio::Task<void> {
     // auto task = bar();
     // task.resume();
     std::puts("[foo] Back from bar!");
+
+    std::puts("[foo] Calling baz...");
+    int result = co_await baz();
+    std::println("[foo] Back from baz! Result: {}", result);
     co_return;
 }
 
