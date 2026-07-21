@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+    #error "Tests should be compiled in debug mode"
+#endif
+
 import asyncio;
 
 #include <coroutine>
