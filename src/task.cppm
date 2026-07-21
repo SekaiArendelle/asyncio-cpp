@@ -1,5 +1,7 @@
 module;
 
+#include <memory>
+#include <optional>
 #include <utility>
 #include <coroutine>
 #include <exception>
@@ -88,9 +90,23 @@ private:
         }
     };
 
+    /// Promise type for typed (non-void) asyncio::Task<T>.
+    ///
+    /// std::optional<T> is used for the result value so that T is not
+    /// required to be default-constructible.  The optional is empty when
+    /// the coroutine is created and is populated by return_value() when
+    /// the coroutine completes.  This avoids the need for manual lifetime
+    /// management via unions and placement-new.
     struct typed_task_promise_type {
         std::coroutine_handle<> continuation = std::noop_coroutine();
-        T value;
+
+        /// Coroutine result value.
+        ///
+        /// Default-constructs as empty (no T constructed).  This eliminates
+        /// the requirement that T be default-constructible, which is
+        /// necessary for types that can only be created with specific
+        /// arguments.
+        std::optional<T> value;
 
         std::suspend_always initial_suspend() noexcept {
             return {};
@@ -104,8 +120,8 @@ private:
             return handle_type::from_promise(*this);
         }
 
-        void return_value(T value) noexcept {
-            this->value = std::move(value);
+        void return_value(T value_) noexcept {
+            value = std::move(value_);
         }
 
         void unhandled_exception() noexcept {
@@ -144,7 +160,7 @@ private:
         }
 
         auto await_resume() noexcept -> T {
-            return std::move(this->callee.promise().value);
+            return std::move(*this->callee.promise().value);
         }
     };
 
