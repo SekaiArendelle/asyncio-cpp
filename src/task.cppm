@@ -120,8 +120,9 @@ private:
             return handle_type::from_promise(*this);
         }
 
-        void return_value(T value_) noexcept {
-            value = std::move(value_);
+        void return_value(std::same_as<T> auto&& value_) noexcept(std::is_nothrow_constructible_v<T, decltype(value_)> &&
+                                                                  std::is_nothrow_assignable_v<T, decltype(value_)>) {
+            value = std::forward<decltype(value_)>(value_);
         }
 
         void unhandled_exception() noexcept {
