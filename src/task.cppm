@@ -169,6 +169,10 @@ public:
         return self.handle;
     }
 
+    auto done(this Task<T> const& self) noexcept -> bool {
+        return not self.handle or self.handle.done();
+    }
+
     void resume(this Task<T>& self) {
         self.handle.resume();
     }
