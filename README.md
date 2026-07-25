@@ -45,4 +45,5 @@ pixi run example coro_func
 
 ```bash
 pixi run clean
+pixi clean
 ```
